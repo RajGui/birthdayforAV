@@ -5,33 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Merry Christmas!</title>
   <style>
-    /* 
-      ---------------
-      GLOBAL RESETS
-      ---------------
-    */
+    /****************************************/
+    /*  GLOBAL RESETS & SETTINGS            */
+    /****************************************/
     html, body {
       margin: 0;
       padding: 0;
       width: 100%;
       height: 100%;
-      overflow: hidden;       /* Hide scrollbars */
-      touch-action: none;     /* Prevent the page from moving on mobile swipes */
+      overflow: hidden;    /* Hide scrollbars entirely */
+      touch-action: none;  /* Disable default scroll on mobile swipes */
       font-family: 'Roboto', sans-serif;
     }
 
-    /* Import a modern font */
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
-    /* 
-      ------------------
-      BACKGROUND & LAYOUT
-      ------------------
-    */
     body {
       /* Larger, more pronounced corner gradients */
-      background: 
-        radial-gradient(circle at top left, rgba(30,30,30,1), rgba(40,40,60,0.8)), 
+      background:
+        radial-gradient(circle at top left, rgba(30,30,30,1), rgba(40,40,60,0.8)),
         radial-gradient(circle at bottom right, rgba(50, 25, 100, 0.8), rgba(30,30,30,1));
       background-size: cover;
       background-color: #1e1e1e;
@@ -39,52 +31,40 @@
       position: relative;
     }
 
+    /****************************************/
+    /*  SLIDER (HORIZONTAL SWIPE)           */
+    /****************************************/
     .slider {
-      /* The horizontal slider container */
       display: flex;
       width: 100%;
       height: 100%;
-      transition: transform 0.5s ease; /* smooth slide transition */
+      transition: transform 0.5s ease;
     }
 
-    /* 
-      ---------------
-      SLIDES
-      ---------------
-    */
     .slide {
       min-width: 100%;
       min-height: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2.0rem;
       text-align: center;
-      box-sizing: border-box;
+      font-size: 2rem;
       padding: 0 15px;
     }
 
-    /* For slight resizing on smaller devices */
     @media (max-width: 600px) {
       .slide {
-        font-size: 1.3rem;
+        font-size: 1.4rem;
       }
     }
 
-    /* Example slides (just different text) */
     .slide1, .slide2, .slide3, .slide4, .slide5 {
-      /* 
-        You can define your own background or just rely on the body gradient.
-        I'll leave these as transparent so we see the main background.
-      */
-      background: transparent;
+      background: transparent; /* Let body gradient show through */
     }
 
-    /* 
-      -----------------------
-      SNOWFLAKES (Background)
-      -----------------------
-    */
+    /****************************************/
+    /*  SNOWFLAKES (BACKGROUND DECOR)       */
+    /****************************************/
     .snowflake {
       position: absolute;
       top: -10px;
@@ -101,20 +81,17 @@
       }
     }
 
-    /* 
-      -----------------------
-      BILLS + CONFETTI
-      -----------------------
-    */
+    /****************************************/
+    /*  BILLS + CONFETTI AREA               */
+    /****************************************/
     .bills-container {
       position: absolute;
-      /* Place them near the center so we can fan them out easily */
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       width: 0;
       height: 0;
       transition: width 0.8s ease, height 0.8s ease, opacity 0.5s;
@@ -122,20 +99,19 @@
       z-index: 999;
     }
     .bills-container.show {
-      /* Expand the container so there's room for the bills to fan out */
-      width: 450px;
-      height: 300px;
+      width: 500px;   /* Enough space for fan-out */
+      height: 300px;  /* Enough space for fan-out */
       opacity: 1;
     }
 
     .bill {
       position: absolute;
-      width: 200px;
-      height: 100px;
+      width: 180px;
+      height: 90px;
       background:
-        /* Subtle stripes: Repeating linear gradient */
+        /* Subtle stripes pattern */
         repeating-linear-gradient(
-          135deg, 
+          135deg,
           rgba(255,255,255,0.05) 0px,
           rgba(255,255,255,0.05) 8px,
           transparent 8px,
@@ -144,22 +120,25 @@
         linear-gradient(45deg, #4caf50, #107f63);
       border-radius: 12px;
       box-shadow: 0 6px 10px rgba(0,0,0,0.4);
-      transform: scale(0) rotate(0deg);
-      transition: transform 0.7s ease;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #fff;
       font-weight: bold;
+      /* Start as invisible stack (scale=0) */
+      transform: scale(0) rotate(0deg);
+      transition: transform 0.5s ease;
       overflow: hidden;
+      cursor: pointer; /* Indicate interactivity */
     }
 
+    /* $100 in corners */
     .bill::before {
       content: "$100";
       position: absolute;
-      top: 8px;
+      top: 6px;
       left: 8px;
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       opacity: 0.7;
     }
     .bill::after {
@@ -167,13 +146,35 @@
       position: absolute;
       bottom: 5px;
       right: 8px;
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       opacity: 0.7;
       transform: rotate(180deg);
     }
 
-    /* We'll position them in a stack, then fan out with JS. */
-    /* Confetti */
+    /* Center emoji on the face */
+    .bill-emoji {
+      position: absolute;
+      font-size: 1.5rem;
+      /* Center the emoji in the bill */
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none; /* so clicks go to the bill itself */
+    }
+
+    /* Bounce animation for interactivity */
+    @keyframes bounce {
+      0%   { transform: scale(1);   }
+      20%  { transform: scale(1.2); }
+      50%  { transform: scale(0.95);}
+      80%  { transform: scale(1.1); }
+      100% { transform: scale(1);   }
+    }
+    .bounce {
+      animation: bounce 0.6s ease;
+    }
+
+    /* CONFETTI */
     .confetti {
       position: absolute;
       width: 10px;
@@ -198,8 +199,9 @@
   </style>
 </head>
 <body>
-  <!-- Snowflakes will be generated by JavaScript -->
+  <!-- SNOWFLAKES WILL BE GENERATED VIA JS -->
 
+  <!-- Slider for horizontal swiping -->
   <div class="slider" id="slider">
     <!-- Slide 1 -->
     <div class="slide slide1">
@@ -207,48 +209,60 @@
         <p>🎄 Merry Christmas! 🎅</p>
       </div>
     </div>
+
     <!-- Slide 2 -->
     <div class="slide slide2">
       <div>
         <p>Wishing you a season <br> filled with joy and warmth! ❤️</p>
       </div>
     </div>
+
     <!-- Slide 3 -->
     <div class="slide slide3">
       <div>
-        <p>May your holidays sparkle <br> with moments of love and laughter. ✨</p>
+        <p>May your holidays sparkle <br> with love and laughter. ✨</p>
       </div>
     </div>
+
     <!-- Slide 4 -->
     <div class="slide slide4">
       <div>
         <p>And now... <br> a special surprise awaits you! 🎁</p>
       </div>
     </div>
+
     <!-- Slide 5 (final reveal - no text) -->
     <div class="slide slide5">
-      <!-- Intentionally left blank, because we'll show the bills + confetti -->
+      <!-- Intentionally blank to emphasize the bills + confetti. -->
     </div>
   </div>
 
-  <!-- BILLS CONTAINER -->
+  <!-- BILLS CONTAINER (3-stage reveal) -->
   <div class="bills-container" id="billsContainer">
-    <div class="bill" id="bill1">100</div>
-    <div class="bill" id="bill2">100</div>
-    <div class="bill" id="bill3">100</div>
-    <div class="bill" id="bill4">100</div>
-    <div class="bill" id="bill5">100</div>
+    <div class="bill" id="bill1">
+      <span class="bill-emoji">&#x1F60E;</span> <!-- 😎 -->
+    </div>
+    <div class="bill" id="bill2">
+      <span class="bill-emoji">&#x1F60E;</span>
+    </div>
+    <div class="bill" id="bill3">
+      <span class="bill-emoji">&#x1F60E;</span>
+    </div>
+    <div class="bill" id="bill4">
+      <span class="bill-emoji">&#x1F60E;</span>
+    </div>
+    <div class="bill" id="bill5">
+      <span class="bill-emoji">&#x1F60E;</span>
+    </div>
   </div>
 
   <script>
-    /*
-      ========================================
-      GLOBAL VARIABLES & SETUP
-      ========================================
-    */
+    /****************************************/
+    /*  GLOBAL VARIABLES & SLIDE SETUP      */
+    /****************************************/
     const slider = document.getElementById('slider');
-    const totalSlides = 5;  // We have 5 slides
-    let currentIndex = 0;   // Start on slide 0
+    const totalSlides = 5; // We have 5 slides
+    let currentIndex = 0;  // Start on slide 0
     let isAnimating = false;
 
     // Touch / Mouse variables
@@ -258,22 +272,19 @@
     let mouseStartX = 0;
     let mouseEndX = 0;
 
-    // Bills & Container
+    // Bills
     const billsContainer = document.getElementById('billsContainer');
     const bills = document.querySelectorAll('.bill');
 
-    /*
-      ========================================
-      SLIDER LOGIC (HORIZONTAL SLIDE)
-      ========================================
-    */
+    /****************************************/
+    /*  SLIDER LOGIC (SWIPE LEFT/RIGHT)     */
+    /****************************************/
     function goToSlide(index) {
       if (index < 0 || index >= totalSlides) return;
-      // Move the .slider container
       slider.style.transform = `translateX(-${index * 100}%)`;
       currentIndex = index;
 
-      // Check if final slide => show bills & confetti
+      // If final slide => 3-stage reveal
       if (currentIndex === totalSlides - 1) {
         showBillsAndConfetti();
       } else {
@@ -281,7 +292,6 @@
       }
     }
 
-    // Next & Prev
     function nextSlide() {
       if (isAnimating) return;
       isAnimating = true;
@@ -295,23 +305,21 @@
       setTimeout(() => (isAnimating = false), 600);
     }
 
-    /*
-      ========================================
-      TOUCH & MOUSE SWIPE HANDLERS
-      ========================================
-    */
+    /****************************************/
+    /*  TOUCH & MOUSE SWIPE HANDLERS        */
+    /****************************************/
     function handleSwipeGesture() {
-      // If we swipe left => next
+      // Swiping left => next
       if (touchEndX < touchStartX - 50) {
         nextSlide();
       }
-      // If we swipe right => prev
+      // Swiping right => prev
       if (touchEndX > touchStartX + 50) {
         prevSlide();
       }
     }
 
-    // Touch Events
+    // Touch
     document.addEventListener('touchstart', (e) => {
       touchStartX = e.changedTouches[0].screenX;
     });
@@ -320,7 +328,7 @@
       handleSwipeGesture();
     });
 
-    // Mouse (Desktop) Events
+    // Mouse
     document.addEventListener('mousedown', (e) => {
       mouseDown = true;
       mouseStartX = e.screenX;
@@ -336,37 +344,59 @@
       }
     });
 
-    /*
-      ========================================
-      BILLS + CONFETTI
-      ========================================
-    */
+    /****************************************/
+    /*  BILLS: 3-STAGE REVEAL + INTERACTION */
+    /****************************************/
     function showBillsAndConfetti() {
-      // Show container (expands & becomes visible)
       billsContainer.classList.add('show');
 
-      // Wait a bit, then fan out the bills
+      // Stage 1: Appear as a single stack
+      setTimeout(() => {
+        bills.forEach((bill) => {
+          bill.style.transform = `scale(1) rotate(0deg)`;
+        });
+      }, 200);
+
+      // Stage 2: Slight horizontal spread
       setTimeout(() => {
         bills.forEach((bill, i) => {
-          // Fan them out in a circular arrangement around center
-          const angle = -20 + (i * 10); // angles from -20 to +20
-          // They scale up from 0 to 1
-          bill.style.transform = `scale(1) rotate(${angle}deg)`;
+          const offset = (i - 2) * 5; // e.g. -10, -5, 0, 5, 10
+          bill.style.transform = `scale(1) translateX(${offset}%) rotate(0deg)`;
         });
-      }, 400);
+      }, 800);
 
-      // Also do confetti
+      // Stage 3: Fan out (angles)
+      setTimeout(() => {
+        bills.forEach((bill, i) => {
+          const offset = (i - 2) * 12; // more spread
+          const angle = (i - 2) * 10;  // -20, -10, 0, 10, 20
+          bill.style.transform = `scale(1) translateX(${offset}%) rotate(${angle}deg)`;
+        });
+      }, 1400);
+
+      // Confetti
       confettiBurst();
     }
 
     function hideBills() {
       billsContainer.classList.remove('show');
       bills.forEach((bill) => {
-        // reset transform so they stack in center
-        bill.style.transform = `scale(0) rotate(0deg)`;
+        bill.style.transform = `scale(0) rotate(0deg) translateX(0)`;
       });
     }
 
+    // Interactivity: click/tap to bounce
+    bills.forEach((bill) => {
+      bill.addEventListener('click', () => {
+        bill.classList.remove('bounce'); // reset if already bouncing
+        void bill.offsetWidth;          // trigger reflow to restart animation
+        bill.classList.add('bounce');
+      });
+    });
+
+    /****************************************/
+    /*  CONFETTI BURST                      */
+    /****************************************/
     function confettiBurst() {
       const confettiCount = 60; // number of confetti pieces
       for (let i = 0; i < confettiCount; i++) {
@@ -378,13 +408,13 @@
         confetti.style.setProperty('--hue', hue);
 
         // random x,y offsets
-        const x = (Math.random() - 0.5) * 800; // -400 to +400
-        const y = (Math.random() - 0.5) * 800; // -400 to +400
+        const x = (Math.random() - 0.5) * 800; // -400..+400
+        const y = (Math.random() - 0.5) * 800; // -400..+400
         confetti.style.setProperty('--x', `${x}px`);
         confetti.style.setProperty('--y', `${y}px`);
 
         // random size
-        const size = Math.random() * 0.8 + 0.3; 
+        const size = Math.random() * 0.8 + 0.3;
         confetti.style.transform = `translate(-50%, -50%) scale(${size})`;
 
         document.body.appendChild(confetti);
@@ -396,28 +426,26 @@
       }
     }
 
-    /*
-      ========================================
-      SNOWFLAKE GENERATION (BACKGROUND)
-      ========================================
-    */
+    /****************************************/
+    /*  SNOWFLAKE GENERATION                */
+    /****************************************/
     function createSnowflakes() {
-      const snowflakeCount = 40; // Adjust if you like
+      const snowflakeCount = 40;
       for (let i = 0; i < snowflakeCount; i++) {
         const snowflake = document.createElement('div');
         snowflake.classList.add('snowflake');
         snowflake.innerHTML = '❄️';
 
-        // Randomize position & size
+        // random position & size
         snowflake.style.left = Math.random() * 100 + 'vw';
         snowflake.style.fontSize = Math.random() * 10 + 10 + 'px';
 
-        // Random animation duration & delay
+        // random anim duration & delay
         const duration = Math.random() * 5 + 5;
         snowflake.style.animationDuration = `${duration}s`;
         snowflake.style.animationDelay = `-${Math.random() * duration}s`;
 
-        // Slight horizontal shift
+        // random horizontal shift
         const horizontalMove = Math.random() * 100 - 50;
         snowflake.style.transform = `translateX(${horizontalMove}px)`;
 
@@ -425,11 +453,9 @@
       }
     }
 
-    /*
-      ========================================
-      INIT ON LOAD
-      ========================================
-    */
+    /****************************************/
+    /*  INIT ON LOAD                        */
+    /****************************************/
     window.onload = () => {
       createSnowflakes();
       goToSlide(0); // Start at first slide
