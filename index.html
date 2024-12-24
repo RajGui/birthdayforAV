@@ -45,6 +45,7 @@
       min-width: 100%;
       min-height: 100%;
       display: flex;
+      flex-direction: column; /* Allow stacking of message and carousel */
       align-items: center;
       justify-content: center;
       text-align: center;
@@ -63,14 +64,13 @@
     .slide1, .slide2, .slide3, .slide4, .slide5 {
       background: transparent; /* Let body gradient show through */
       display: flex;
+      flex-direction: column; /* Allow stacking of message and carousel */
       align-items: center;
       justify-content: center;
       padding: 20px;
     }
 
-    /****************************************/
-    /*  MAGICAL TEXT STYLING                */
-    /****************************************/
+    /* MAGICAL TEXT STYLING */
     .slide p {
       /* Gradient Text */
       background: linear-gradient(90deg, rgba(135, 206, 250, 1), rgba(138, 43, 226, 0.8));
@@ -80,6 +80,40 @@
       opacity: 0.9;
       /* Subtle text shadow for readability */
       text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+
+    /****************************************/
+    /*  PHOTO CAROUSEL STYLING              */
+    /****************************************/
+    .carousel {
+      position: relative;
+      width: 100%;
+      max-width: 600px; /* Adjust as needed */
+      height: 200px; /* Adjust based on image height */
+      overflow: hidden;
+      margin: 20px auto; /* Center the carousel */
+    }
+
+    .carousel-image {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      top: 100%; /* Start below the visible area */
+      left: 0;
+      opacity: 0;
+      transition: all 1s ease-in-out;
+    }
+
+    .carousel-image.active {
+      top: 0;
+      opacity: 1;
+    }
+
+    @media (max-width: 600px) {
+      .carousel {
+        height: 150px; /* Adjust height for smaller screens */
+      }
     }
 
     /****************************************/
@@ -214,29 +248,57 @@
   <div class="slider" id="slider">
     <!-- Slide 1 -->
     <div class="slide slide1">
-      <div>
+      <div class="message">
         <p>🎄 Merry Christmas! 🎅</p>
+      </div>
+      <!-- Photo Carousel -->
+      <div class="carousel">
+        <img src="images/image1.jpg" alt="Christmas Image 1" class="carousel-image">
+        <img src="images/image2.jpg" alt="Christmas Image 2" class="carousel-image">
+        <img src="images/image3.jpg" alt="Christmas Image 3" class="carousel-image">
+        <!-- Add more images as needed -->
       </div>
     </div>
 
     <!-- Slide 2 -->
     <div class="slide slide2">
-      <div>
+      <div class="message">
         <p>Wishing you a season <br> filled with joy and warmth! ❤️</p>
+      </div>
+      <!-- Photo Carousel -->
+      <div class="carousel">
+        <img src="images/image4.jpg" alt="Christmas Image 4" class="carousel-image">
+        <img src="images/image5.jpg" alt="Christmas Image 5" class="carousel-image">
+        <img src="images/image6.jpg" alt="Christmas Image 6" class="carousel-image">
+        <!-- Add more images as needed -->
       </div>
     </div>
 
     <!-- Slide 3 -->
     <div class="slide slide3">
-      <div>
+      <div class="message">
         <p>May your holidays sparkle <br> with love and laughter. ✨</p>
+      </div>
+      <!-- Photo Carousel -->
+      <div class="carousel">
+        <img src="images/image7.jpg" alt="Christmas Image 7" class="carousel-image">
+        <img src="images/image8.jpg" alt="Christmas Image 8" class="carousel-image">
+        <img src="images/image9.jpg" alt="Christmas Image 9" class="carousel-image">
+        <!-- Add more images as needed -->
       </div>
     </div>
 
     <!-- Slide 4 -->
     <div class="slide slide4">
-      <div>
+      <div class="message">
         <p>And now... <br> a special surprise awaits you! 🎁</p>
+      </div>
+      <!-- Photo Carousel -->
+      <div class="carousel">
+        <img src="images/image10.jpg" alt="Christmas Image 10" class="carousel-image">
+        <img src="images/image11.jpg" alt="Christmas Image 11" class="carousel-image">
+        <img src="images/image12.jpg" alt="Christmas Image 12" class="carousel-image">
+        <!-- Add more images as needed -->
       </div>
     </div>
 
@@ -467,7 +529,29 @@
     window.onload = () => {
       createSnowflakes();
       goToSlide(0); // Start at first slide
+      initializeCarousels(); // Initialize the carousels
     };
+
+    /****************************************/
+    /*  PHOTO CAROUSEL FUNCTION             */
+    /****************************************/
+    function initializeCarousels() {
+      const carousels = document.querySelectorAll('.carousel');
+      carousels.forEach((carousel) => {
+        const images = carousel.querySelectorAll('.carousel-image');
+        let current = 0;
+
+        // Initialize first image
+        images[current].classList.add('active');
+
+        // Function to show next image
+        setInterval(() => {
+          images[current].classList.remove('active');
+          current = (current + 1) % images.length;
+          images[current].classList.add('active');
+        }, 3000); // Change image every 3 seconds
+      });
+    }
   </script>
 </body>
 </html>
