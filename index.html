@@ -49,6 +49,7 @@
             transition: all 0.5s ease;
             font-size: 1.8em;
             line-height: 1.4;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
 
         .message.active {
@@ -85,9 +86,47 @@
             }
         }
 
-        /* Optional: Add some subtle shadow to the text */
-        .message {
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        /* Bills Container */
+        .bills-container {
+            position: fixed;
+            bottom: -150px; /* Start off-screen */
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            opacity: 0;
+            transition: all 1s ease;
+            z-index: 10;
+        }
+
+        /* Individual Bill Styling */
+        .bill {
+            width: 80px;
+            height: 40px;
+            background: linear-gradient(45deg, #4caf50, #81c784);
+            border-radius: 8px;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transform: rotate(-5deg);
+            animation: float 2s infinite alternate;
+        }
+
+        /* Slight Rotation for Each Bill */
+        .bill:nth-child(1) { transform: rotate(-5deg) translateY(0); }
+        .bill:nth-child(2) { transform: rotate(5deg) translateY(0); }
+        .bill:nth-child(3) { transform: rotate(-3deg) translateY(0); }
+        .bill:nth-child(4) { transform: rotate(3deg) translateY(0); }
+        .bill:nth-child(5) { transform: rotate(0deg) translateY(0); }
+
+        /* Float Animation */
+        @keyframes float {
+            to {
+                transform: translateY(-20px);
+            }
         }
     </style>
 </head>
@@ -103,6 +142,15 @@
         <div class="message">I'm giving you $500! 🎉 Happy Holidays!</div>
     </div>
 
+    <!-- Sliding Bills Container -->
+    <div class="bills-container" id="bills-container">
+        <div class="bill">$100</div>
+        <div class="bill">$100</div>
+        <div class="bill">$100</div>
+        <div class="bill">$100</div>
+        <div class="bill">$100</div>
+    </div>
+
     <script>
         // Message Navigation Logic
         const messages = document.querySelectorAll('.message');
@@ -112,6 +160,20 @@
         // Swipe Detection Variables
         let touchStartX = 0;
         let touchEndX = 0;
+
+        // Function to show the bills
+        function showBills() {
+            const billsContainer = document.getElementById('bills-container');
+            billsContainer.style.bottom = '20px'; // Slide up into view
+            billsContainer.style.opacity = '1';
+        }
+
+        // Function to hide the bills
+        function hideBills() {
+            const billsContainer = document.getElementById('bills-container');
+            billsContainer.style.bottom = '-150px';
+            billsContainer.style.opacity = '0';
+        }
 
         // Function to update messages based on direction
         function updateMessages(direction) {
@@ -127,6 +189,11 @@
                     current.classList.add('exit-left');
                     next.classList.add('active');
                     currentMessage++;
+                    
+                    // If this is the last message, show the bills
+                    if (currentMessage === messages.length - 1) {
+                        setTimeout(showBills, 500); // Delay to sync with transition
+                    }
                 }
             } else if (direction === 'prev') {
                 if (currentMessage > 0) {
@@ -134,6 +201,11 @@
                     current.classList.add('exit-right');
                     next.classList.add('active');
                     currentMessage--;
+
+                    // Hide the bills if navigating back
+                    if (currentMessage < messages.length - 1) {
+                        hideBills();
+                    }
                 }
             }
 
@@ -202,6 +274,7 @@
                 // Randomize animation duration and delay
                 const duration = Math.random() * 5 + 5; // 5s to 10s
                 snowflake.style.animationDuration = `${duration}s`;
+                snowflake.style.animationDelay = `-${Math.random() * duration}s`; // Start at random position in the animation
 
                 // Randomize horizontal movement using CSS transforms
                 const horizontalMove = Math.random() * 100 - 50; // -50px to +50px
