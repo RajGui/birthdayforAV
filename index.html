@@ -16,77 +16,106 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-direction: column;
         }
         .message-container {
             position: relative;
             width: 80%;
             max-width: 600px;
-            text-align: center;
+            height: 100px;
+            overflow: hidden;
         }
         .message {
             font-size: 1.5em;
-            opacity: 0;
-            transition: opacity 0.5s ease;
             position: absolute;
             top: 0;
-            left: 0;
-            right: 0;
+            left: 100%;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+            opacity: 0;
+            white-space: nowrap;
         }
         .message.active {
+            transform: translateX(0);
             opacity: 1;
         }
-        .nav {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 2em;
-            cursor: pointer;
-            color: #2e7d32;
+        .message.exit-left {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+        .message.exit-right {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        .nav-buttons {
+            margin-top: 20px;
+        }
+        .nav-button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 0 10px;
+            background: #2e7d32;
+            color: #fff;
+            font-size: 1em;
             font-weight: bold;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
             user-select: none;
         }
-        .nav.left {
-            left: -50px;
-        }
-        .nav.right {
-            right: -50px;
+        .nav-button:hover {
+            background: #1b5e20;
         }
     </style>
 </head>
 <body>
     <div class="message-container">
-        <div class="message active">🎄 Merry Christmas AV! 🎅</div>
+        <div class="message active">🎄 Merry Christmas! 🎅</div>
         <div class="message">Hope your holiday is filled with joy and love! ❤️</div>
         <div class="message">Here's to a magical and warm Christmas season. ✨</div>
         <div class="message">And now... a special surprise for you! 🎁</div>
-        <div class="message">Here's a little something...</div>
+        <div class="message">I'm giving you $500! 🎉 Happy Holidays!</div>
     </div>
-    <div class="nav left" onclick="prevMessage()">&#9664;</div>
-    <div class="nav right" onclick="nextMessage()">&#9654;</div>
+    <div class="nav-buttons">
+        <div class="nav-button" onclick="prevMessage()">&#9664; Previous</div>
+        <div class="nav-button" onclick="nextMessage()">Next &#9654;</div>
+    </div>
 
     <script>
         const messages = document.querySelectorAll('.message');
         let currentMessage = 0;
 
-        function updateMessages() {
+        function updateMessages(direction) {
             messages.forEach((msg, index) => {
-                msg.classList.toggle('active', index === currentMessage);
+                if (index === currentMessage) {
+                    msg.classList.add('active');
+                    msg.classList.remove('exit-left', 'exit-right');
+                } else {
+                    msg.classList.remove('active');
+                    if (direction === 'next') {
+                        msg.classList.add(index < currentMessage ? 'exit-left' : 'exit-right');
+                    } else if (direction === 'prev') {
+                        msg.classList.add(index > currentMessage ? 'exit-right' : 'exit-left');
+                    }
+                }
             });
         }
 
         function nextMessage() {
             if (currentMessage < messages.length - 1) {
                 currentMessage++;
-                updateMessages();
+                updateMessages('next');
             }
         }
 
         function prevMessage() {
             if (currentMessage > 0) {
                 currentMessage--;
-                updateMessages();
+                updateMessages('prev');
             }
         }
+
+        // Initialize the first message state
+        updateMessages();
     </script>
 </body>
 </html>
