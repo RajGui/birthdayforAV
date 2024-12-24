@@ -45,9 +45,9 @@
       min-width: 100%;
       min-height: 100%;
       display: flex;
-      flex-direction: column; /* Allow stacking of message and carousel */
-      align-items: center;
-      justify-content: center;
+      flex-direction: column; /* Stack elements vertically */
+      align-items: center;    /* Center horizontally */
+      justify-content: center;/* Center vertically */
       text-align: center;
       font-size: 2rem;
       padding: 0 15px;
@@ -70,7 +70,9 @@
       padding: 20px;
     }
 
-    /* MAGICAL TEXT STYLING */
+    /****************************************/
+    /*  MAGICAL TEXT STYLING                */
+    /****************************************/
     .slide p {
       /* Gradient Text */
       background: linear-gradient(90deg, rgba(135, 206, 250, 1), rgba(138, 43, 226, 0.8));
@@ -83,97 +85,8 @@
     }
 
     /****************************************/
-    /*  FINAL TEXT STYLING AND ANIMATION    */
-    /****************************************/
-    
-    /* Final Text Container */
-    .final-text {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-      opacity: 0; /* Initially hidden */
-      pointer-events: none; /* Allow clicks to pass through */
-    }
-    
-    /* Golden Sparkle Gradient Text */
-    .final-text p {
-      font-size: 2rem;
-      font-weight: bold;
-      margin: 10px 0;
-      background: linear-gradient(45deg, #FFD700, #FFAA00, #FFD700); /* Gold gradient */
-      background-size: 200% 200%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: sparkle 3s linear infinite;
-      
-      /* Fade-In and Move Animations */
-      opacity: 0;
-      animation: fadeIn 1s forwards, moveUpDown 1s forwards;
-    }
-    
-    /* Line 1 Animation: Fade In and Move Up */
-    .final-text .line1 {
-      animation-delay: 1.6s, 2.6s; /* Fade in after bills fan out, then move up */
-    }
-    
-    /* Line 2 Animation: Fade In and Move Down */
-    .final-text .line2 {
-      animation-delay: 1.6s, 2.6s; /* Fade in after bills fan out, then move down */
-    }
-    
-    /* Keyframes for Fade In */
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
-      }
-    }
-    
-    /* Keyframes for Moving Up and Down */
-    @keyframes moveUpDown {
-      to {
-        transform: translate(-50%, -60%);
-      }
-    }
-    
-    .final-text .line2 {
-      /* Override the moveUpDown for line2 to move down */
-      animation: fadeIn 1s forwards, moveDown 1s forwards;
-      animation-delay: 1.6s, 2.6s; /* Fade in after bills fan out, then move down */
-    }
-    
-    @keyframes moveDown {
-      to {
-        transform: translate(-50%, -40%);
-      }
-    }
-    
-    /* Sparkle Effect */
-    @keyframes sparkle {
-      0% {
-        background-position: 0% 50%;
-      }
-      50% {
-        background-position: 100% 50%;
-      }
-      100% {
-        background-position: 0% 50%;
-      }
-    }
-    
-    /* Optional: Rounded Corners and Fade-Out Borders */
-    .final-text p {
-      border-radius: 10px;
-      padding: 5px 10px;
-      background: rgba(255, 215, 0, 0.1); /* Slight gold tint */
-      box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); /* Gold glow */
-    }
-
-    /****************************************/
     /*  PHOTO CAROUSEL STYLING              */
     /****************************************/
-    /* Update Carousel Container */
     .carousel {
       position: relative;
       width: 300px;            /* Set a fixed width */
@@ -181,9 +94,9 @@
       overflow: hidden;        /* Hide overflowing images */
       margin: 20px auto;       /* Center the carousel horizontally */
       border-radius: 15px;     /* Rounded corners */
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3); /* Optional shadow for depth */
     }
-    
-    /* Update Carousel Images */
+
     .carousel-image {
       position: absolute;
       width: 100%;
@@ -195,14 +108,13 @@
       transition: all 1s ease-in-out;
       border-radius: 15px;     /* Rounded corners */
     }
-    
-    /* Active Image Styling */
+
     .carousel-image.active {
       top: 0;
       opacity: 1;
     }
-    
-    /* Add Fade-Out Border Using a Pseudo-Element */
+
+    /* Fade-Out Border Using a Pseudo-Element */
     .carousel::before {
       content: '';
       position: absolute;
@@ -219,14 +131,13 @@
       border-radius: 15px; /* Match the carousel's rounded corners */
     }
 
-
     @media (max-width: 600px) {
       .carousel {
         width: 250px;      /* Reduced width for smaller screens */
         height: 166px;     /* Maintain aspect ratio */
         border-radius: 10px; /* Slightly smaller rounded corners */
       }
-    
+
       .carousel::before {
         border-radius: 10px; /* Match the reduced border radius */
       }
@@ -355,6 +266,117 @@
         opacity: 0;
       }
     }
+
+    /****************************************/
+    /*  FINAL TEXT STYLING                  */
+    /****************************************/
+    .final-text-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      height: 100%;
+      pointer-events: none; /* Allow interactions to pass through */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000; /* Above bills and confetti */
+    }
+
+    .final-text {
+      opacity: 0;
+      font-size: 2rem;
+      font-weight: bold;
+      color: transparent;
+      background: linear-gradient(90deg, #FFD700, #FFEC8B, #FFD700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-align: center;
+      margin: 10px 0;
+      transition: opacity 1s ease-in-out;
+    }
+
+    .final-text.line1 {
+      /* Positioning for line1 */
+      position: absolute;
+      /* Initial position will be centered, animate upwards */
+    }
+
+    .final-text.line2 {
+      /* Positioning for line2 */
+      position: absolute;
+      /* Initial position will be centered, animate downwards */
+    }
+
+    /* Fade-in Animation */
+    .fade-in {
+      opacity: 1;
+    }
+
+    /* Move Up Animation for Line 1 */
+    @keyframes moveUp {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(-150px);
+      }
+    }
+
+    /* Move Down Animation for Line 2 */
+    @keyframes moveDown {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(150px);
+      }
+    }
+
+    .move-up {
+      animation: moveUp 2s forwards;
+    }
+
+    .move-down {
+      animation: moveDown 2s forwards;
+    }
+
+    /* Sparkle Effect Using Pseudo-Elements */
+    .final-text::before,
+    .final-text::after {
+      content: '✨';
+      position: absolute;
+      font-size: 1.5rem;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    .final-text::before {
+      top: -10px;
+      left: -20px;
+    }
+
+    .final-text::after {
+      bottom: -10px;
+      right: -20px;
+    }
+
+    .final-text.active::before,
+    .final-text.active::after {
+      opacity: 1;
+      animation: sparkle 1s infinite;
+    }
+
+    @keyframes sparkle {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0;
+      }
+    }
   </style>
 </head>
 <body>
@@ -369,7 +391,7 @@
       </div>
       <!-- Photo Carousel -->
       <div class="carousel">
-        <img src="imagecompressor/image1.jpg" alt="Christmas Image 1" class="carousel-image">
+        <img src="imagecompressor/image1.jpg" alt="Christmas Image 1" class="carousel-image active">
         <img src="imagecompressor/image2.jpg" alt="Christmas Image 2" class="carousel-image">
         <img src="imagecompressor/image3.jpg" alt="Christmas Image 3" class="carousel-image">
         <!-- Add more images as needed -->
@@ -383,7 +405,7 @@
       </div>
       <!-- Photo Carousel -->
       <div class="carousel">
-        <img src="imagecompressor/image4.jpg" alt="Christmas Image 4" class="carousel-image">
+        <img src="imagecompressor/image4.jpg" alt="Christmas Image 4" class="carousel-image active">
         <img src="imagecompressor/image5.jpg" alt="Christmas Image 5" class="carousel-image">
         <img src="imagecompressor/image6.jpg" alt="Christmas Image 6" class="carousel-image">
         <!-- Add more images as needed -->
@@ -393,11 +415,11 @@
     <!-- Slide 3 -->
     <div class="slide slide3">
       <div class="message">
-        <p>May your holidays sparkle <br> with love and laughter. ✨</p>
+        <p>May your holidays sparkle <br> with love and laughter.</p>
       </div>
       <!-- Photo Carousel -->
       <div class="carousel">
-        <img src="imagecompressor/image7.jpg" alt="Christmas Image 7" class="carousel-image">
+        <img src="imagecompressor/image7.jpg" alt="Christmas Image 7" class="carousel-image active">
         <img src="imagecompressor/image8.jpg" alt="Christmas Image 8" class="carousel-image">
         <img src="imagecompressor/image9.jpg" alt="Christmas Image 9" class="carousel-image">
         <!-- Add more images as needed -->
@@ -411,19 +433,16 @@
       </div>
       <!-- Photo Carousel -->
       <div class="carousel">
-        <img src="imagecompressor/image10.jpg" alt="Christmas Image 10" class="carousel-image">
-        <img src="imagecompressor/image11.jpg" alt="Christmas Image 11" class="carousel-image">
-        <img src="imagecompressor/image12.jpg" alt="Christmas Image 12" class="carousel-image">
+        <img src="images/image10.jpg" alt="Christmas Image 10" class="carousel-image active">
+        <img src="images/image11.jpg" alt="Christmas Image 11" class="carousel-image">
+        <img src="images/image12.jpg" alt="Christmas Image 12" class="carousel-image">
         <!-- Add more images as needed -->
       </div>
     </div>
 
     <!-- Slide 5 (final reveal - no text) -->
     <div class="slide slide5">
-      <div class="final-text" id="finalText">
-        <p class="line1">Here's a little something...</p>
-        <p class="line2">Get yourself something nice :]</p>
-      </div>
+      <!-- Intentionally blank to emphasize the bills + confetti. -->
     </div>
   </div>
 
@@ -446,6 +465,12 @@
     </div>
   </div>
 
+  <!-- FINAL TEXT CONTAINER -->
+  <div class="final-text-container">
+    <div class="final-text line1">Here's a little something... ($500)</div>
+    <div class="final-text line2">Get yourself something nice :]</div>
+  </div>
+
   <script>
     /****************************************/
     /*  GLOBAL VARIABLES & SLIDE SETUP      */
@@ -466,6 +491,11 @@
     const billsContainer = document.getElementById('billsContainer');
     const bills = document.querySelectorAll('.bill');
 
+    // Final Text Elements
+    const finalTextContainer = document.querySelector('.final-text-container');
+    const line1 = document.querySelector('.final-text.line1');
+    const line2 = document.querySelector('.final-text.line2');
+
     /****************************************/
     /*  SLIDER LOGIC (SWIPE LEFT/RIGHT)     */
     /****************************************/
@@ -479,6 +509,7 @@
         showBillsAndConfetti();
       } else {
         hideBills();
+        hideFinalText(); // Hide final text if navigating back
       }
     }
 
@@ -539,14 +570,14 @@
     /****************************************/
     function showBillsAndConfetti() {
       billsContainer.classList.add('show');
-    
+
       // Stage 1: Appear as a single stack
       setTimeout(() => {
         bills.forEach((bill) => {
           bill.style.transform = `scale(1) rotate(0deg)`;
         });
       }, 200);
-    
+
       // Stage 2: Slight horizontal spread
       setTimeout(() => {
         bills.forEach((bill, i) => {
@@ -554,23 +585,22 @@
           bill.style.transform = `scale(1) translateX(${offset}px) rotate(0deg)`;
         });
       }, 800);
-    
+
       // Stage 3: Fan out from the bottom
       setTimeout(() => {
         bills.forEach((bill, i) => {
           const angle = (i - 2) * 15;  // -30, -15, 0, 15, 30 degrees
           bill.style.transform = `scale(1) translateX(${(i - 2) * 20}px) rotate(${angle}deg)`;
         });
-        
-        // Show final text after bills have fanned out
-        setTimeout(() => {
-          const finalText = document.getElementById('finalText');
-          finalText.style.opacity = '1'; // Trigger CSS animations
-        }, 200); // Slight delay to ensure bills are fully fanned out
       }, 1400);
-    
+
       // Confetti
       confettiBurst();
+
+      // Show final text after bills have fanned out
+      setTimeout(() => {
+        fadeInFinalText();
+      }, 1800); // Slight delay after fan-out
     }
 
     function hideBills() {
@@ -578,6 +608,9 @@
       bills.forEach((bill) => {
         bill.style.transform = `scale(0) rotate(0deg) translateX(0)`;
       });
+
+      // Hide final text if navigating back
+      hideFinalText();
     }
 
     // Interactivity: click/tap to bounce
@@ -646,6 +679,26 @@
 
         document.body.appendChild(snowflake);
       }
+    }
+
+    /****************************************/
+    /*  FINAL TEXT ANIMATIONS               */
+    /****************************************/
+    function fadeInFinalText() {
+      line1.classList.add('fade-in', 'active');
+      line2.classList.add('fade-in', 'active');
+
+      // After fade-in, separate the lines
+      setTimeout(() => {
+        line1.classList.add('move-up');
+        line2.classList.add('move-down');
+      }, 200); // 2 seconds after fade-in
+    }
+
+    function hideFinalText() {
+      // Remove all classes to reset
+      line1.classList.remove('fade-in', 'active', 'move-up');
+      line2.classList.remove('fade-in', 'active', 'move-down');
     }
 
     /****************************************/
