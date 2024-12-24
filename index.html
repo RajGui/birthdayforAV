@@ -3,32 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Birthday!</title>
+    <title>Merry Christmas!</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background-color: #ffe6e6;
-            padding: 20px;
+            background-color: #e0f7fa;
+            color: #2e7d32;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        h1 {
-            color: #ff4081;
+        .message-container {
+            position: relative;
+            width: 80%;
+            max-width: 600px;
+            text-align: center;
         }
-        p {
+        .message {
             font-size: 1.5em;
-            color: #333;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
         }
-        .gift {
+        .message.active {
+            opacity: 1;
+        }
+        .nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
             font-size: 2em;
+            cursor: pointer;
+            color: #2e7d32;
             font-weight: bold;
-            color: #4caf50;
+            user-select: none;
+        }
+        .nav.left {
+            left: -50px;
+        }
+        .nav.right {
+            right: -50px;
         }
     </style>
 </head>
 <body>
-    <h1>Merry Christmas, AV!</h1>
-    <p>Here's a little something for you. 🎉</p>
-    <img src="your-image-url-here.jpg" alt="Birthday Celebration" width="300">
-    <p class="gift">Here's $500, Merry Christmas! 🎁</p>
+    <div class="message-container">
+        <div class="message active">🎄 Merry Christmas AV! 🎅</div>
+        <div class="message">Hope your holiday is filled with joy and love! ❤️</div>
+        <div class="message">Here's to a magical and warm Christmas season. ✨</div>
+        <div class="message">And now... a special surprise for you! 🎁</div>
+        <div class="message">Here's a little something...</div>
+    </div>
+    <div class="nav left" onclick="prevMessage()">&#9664;</div>
+    <div class="nav right" onclick="nextMessage()">&#9654;</div>
+
+    <script>
+        const messages = document.querySelectorAll('.message');
+        let currentMessage = 0;
+
+        function updateMessages() {
+            messages.forEach((msg, index) => {
+                msg.classList.toggle('active', index === currentMessage);
+            });
+        }
+
+        function nextMessage() {
+            if (currentMessage < messages.length - 1) {
+                currentMessage++;
+                updateMessages();
+            }
+        }
+
+        function prevMessage() {
+            if (currentMessage > 0) {
+                currentMessage--;
+                updateMessages();
+            }
+        }
+    </script>
 </body>
 </html>
