@@ -6,116 +6,142 @@
     <title>Merry Christmas!</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             text-align: center;
-            background-color: #e0f7fa;
-            color: #2e7d32;
+            background-color: #e0f7fa; /* Light blue background */
+            color: #2e7d32; /* Green text */
             height: 100vh;
             margin: 0;
-            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
         }
-        .message-container {
+        .container {
             position: relative;
             width: 80%;
             max-width: 600px;
-            height: 100px;
+            background: #ffffff;
+            padding: 40px 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .message-container {
+            position: relative;
+            height: 200px; /* Fixed height to prevent layout shift */
             overflow: hidden;
         }
         .message {
-            font-size: 1.5em;
             position: absolute;
+            width: 100%;
             top: 0;
             left: 100%;
-            transition: transform 0.5s ease, opacity 0.5s ease;
             opacity: 0;
-            white-space: nowrap;
+            transition: all 0.5s ease;
         }
         .message.active {
-            transform: translateX(0);
+            left: 0;
             opacity: 1;
         }
         .message.exit-left {
-            transform: translateX(-100%);
+            left: -100%;
             opacity: 0;
         }
         .message.exit-right {
-            transform: translateX(100%);
+            left: 100%;
             opacity: 0;
         }
         .nav-buttons {
             margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
         }
         .nav-button {
-            display: inline-block;
-            padding: 10px 20px;
-            margin: 0 10px;
-            background: #2e7d32;
-            color: #fff;
-            font-size: 1em;
-            font-weight: bold;
-            text-decoration: none;
-            border-radius: 5px;
+            font-size: 2em;
             cursor: pointer;
+            color: #2e7d32;
             user-select: none;
+            transition: color 0.3s;
         }
         .nav-button:hover {
-            background: #1b5e20;
+            color: #4caf50;
+        }
+        /* Optional: Add some Christmas decorations */
+        .snowflake {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 1.5em;
+            animation: snow 10s linear infinite;
+        }
+        @keyframes snow {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <div class="message-container">
-        <div class="message active">🎄 Merry Christmas! 🎅</div>
-        <div class="message">Hope your holiday is filled with joy and love! ❤️</div>
-        <div class="message">Here's to a magical and warm Christmas season. ✨</div>
-        <div class="message">And now... a special surprise for you! 🎁</div>
-        <div class="message">I'm giving you $500! 🎉 Happy Holidays!</div>
-    </div>
-    <div class="nav-buttons">
-        <div class="nav-button" onclick="prevMessage()">&#9664; Previous</div>
-        <div class="nav-button" onclick="nextMessage()">Next &#9654;</div>
+    <div class="container">
+        <!-- Optional Snowflake Decoration -->
+        <div class="snowflake">❄️</div>
+        
+        <div class="message-container">
+            <div class="message active">🎄 Merry Christmas! 🎅</div>
+            <div class="message">Wishing you a season filled with joy and warmth! ❤️</div>
+            <div class="message">May your holidays sparkle with moments of love and laughter. ✨</div>
+            <div class="message">And now... a special surprise for you! 🎁</div>
+            <div class="message">I'm giving you $500! 🎉 Happy Holidays!</div>
+        </div>
+        <div class="nav-buttons">
+            <div class="nav-button" onclick="prevMessage()">&#9664;</div>
+            <div class="nav-button" onclick="nextMessage()">&#9654;</div>
+        </div>
     </div>
 
     <script>
         const messages = document.querySelectorAll('.message');
         let currentMessage = 0;
+        let isAnimating = false;
 
         function updateMessages(direction) {
-            messages.forEach((msg, index) => {
-                if (index === currentMessage) {
-                    msg.classList.add('active');
-                    msg.classList.remove('exit-left', 'exit-right');
-                } else {
-                    msg.classList.remove('active');
-                    if (direction === 'next') {
-                        msg.classList.add(index < currentMessage ? 'exit-left' : 'exit-right');
-                    } else if (direction === 'prev') {
-                        msg.classList.add(index > currentMessage ? 'exit-right' : 'exit-left');
-                    }
+            if (isAnimating) return; // Prevent multiple clicks during animation
+            isAnimating = true;
+
+            const current = messages[currentMessage];
+            let next;
+
+            if (direction === 'next') {
+                if (currentMessage < messages.length - 1) {
+                    next = messages[currentMessage + 1];
+                    current.classList.add('exit-left');
+                    next.classList.add('active');
+                    currentMessage++;
                 }
+            } else if (direction === 'prev') {
+                if (currentMessage > 0) {
+                    next = messages[currentMessage - 1];
+                    current.classList.add('exit-right');
+                    next.classList.add('active');
+                    currentMessage--;
+                }
+            }
+
+            // Listen for transition end to reset classes
+            current.addEventListener('transitionend', function handler() {
+                current.classList.remove('active', 'exit-left', 'exit-right');
+                isAnimating = false;
+                current.removeEventListener('transitionend', handler);
             });
         }
 
         function nextMessage() {
-            if (currentMessage < messages.length - 1) {
-                currentMessage++;
-                updateMessages('next');
-            }
+            updateMessages('next');
         }
 
         function prevMessage() {
-            if (currentMessage > 0) {
-                currentMessage--;
-                updateMessages('prev');
-            }
+            updateMessages('prev');
         }
-
-        // Initialize the first message state
-        updateMessages();
     </script>
 </body>
 </html>
