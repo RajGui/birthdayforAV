@@ -83,6 +83,94 @@
     }
 
     /****************************************/
+    /*  FINAL TEXT STYLING AND ANIMATION    */
+    /****************************************/
+    
+    /* Final Text Container */
+    .final-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      opacity: 0; /* Initially hidden */
+      pointer-events: none; /* Allow clicks to pass through */
+    }
+    
+    /* Golden Sparkle Gradient Text */
+    .final-text p {
+      font-size: 2rem;
+      font-weight: bold;
+      margin: 10px 0;
+      background: linear-gradient(45deg, #FFD700, #FFAA00, #FFD700); /* Gold gradient */
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: sparkle 3s linear infinite;
+      
+      /* Fade-In and Move Animations */
+      opacity: 0;
+      animation: fadeIn 1s forwards, moveUpDown 1s forwards;
+    }
+    
+    /* Line 1 Animation: Fade In and Move Up */
+    .final-text .line1 {
+      animation-delay: 1.6s, 2.6s; /* Fade in after bills fan out, then move up */
+    }
+    
+    /* Line 2 Animation: Fade In and Move Down */
+    .final-text .line2 {
+      animation-delay: 1.6s, 2.6s; /* Fade in after bills fan out, then move down */
+    }
+    
+    /* Keyframes for Fade In */
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+    
+    /* Keyframes for Moving Up and Down */
+    @keyframes moveUpDown {
+      to {
+        transform: translate(-50%, -60%);
+      }
+    }
+    
+    .final-text .line2 {
+      /* Override the moveUpDown for line2 to move down */
+      animation: fadeIn 1s forwards, moveDown 1s forwards;
+      animation-delay: 1.6s, 2.6s; /* Fade in after bills fan out, then move down */
+    }
+    
+    @keyframes moveDown {
+      to {
+        transform: translate(-50%, -40%);
+      }
+    }
+    
+    /* Sparkle Effect */
+    @keyframes sparkle {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+    
+    /* Optional: Rounded Corners and Fade-Out Borders */
+    .final-text p {
+      border-radius: 10px;
+      padding: 5px 10px;
+      background: rgba(255, 215, 0, 0.1); /* Slight gold tint */
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); /* Gold glow */
+    }
+
+    /****************************************/
     /*  PHOTO CAROUSEL STYLING              */
     /****************************************/
     /* Update Carousel Container */
@@ -277,7 +365,7 @@
     <!-- Slide 1 -->
     <div class="slide slide1">
       <div class="message">
-        <p>🎄 Merry Christmas! 🎅</p>
+        <p>Merry Christmas!</p>
       </div>
       <!-- Photo Carousel -->
       <div class="carousel">
@@ -319,7 +407,7 @@
     <!-- Slide 4 -->
     <div class="slide slide4">
       <div class="message">
-        <p>And now... <br> a special surprise awaits you! 🎁</p>
+        <p>And now... <br> a special surprise awaits you!</p>
       </div>
       <!-- Photo Carousel -->
       <div class="carousel">
@@ -332,8 +420,9 @@
 
     <!-- Slide 5 (final reveal - no text) -->
     <div class="slide slide5">
-      <div class="message">
-        <p>Here's a little something. Get yourself something nice :)</p>
+      <div class="final-text" id="finalText">
+        <p class="line1">Here's a little something...</p>
+        <p class="line2">Get yourself something nice :]</p>
       </div>
     </div>
   </div>
@@ -466,12 +555,18 @@
         });
       }, 800);
 
-      // Stage 3: Fan out from the bottom
+       // Stage 3: Fan out from the bottom
       setTimeout(() => {
         bills.forEach((bill, i) => {
           const angle = (i - 2) * 15;  // -30, -15, 0, 15, 30 degrees
           bill.style.transform = `scale(1) translateX(${(i - 2) * 20}px) rotate(${angle}deg)`;
         });
+        
+        // Show final text after bills have fanned out
+        setTimeout(() => {
+          const finalText = document.getElementById('finalText');
+          finalText.style.opacity = '1'; // Trigger CSS animations
+        }, 200); // Slight delay to ensure bills are fully fanned out
       }, 1400);
 
       // Confetti
