@@ -1,293 +1,438 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Merry Christmas!</title>
-    <style>
-        /* Import a modern font */
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Merry Christmas!</title>
+  <style>
+    /* Import a modern font */
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
-        /* Reset default margins and paddings */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    /* Reset default margins and paddings */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        /* Body Styling */
-        body {
-            font-family: 'Roboto', sans-serif;
-            background: linear-gradient(135deg, rgba(30,30,30,1) 0%, rgba(30,30,30,1) 85%, rgba(50, 25, 100, 0.5) 100%), 
-                        linear-gradient(225deg, rgba(30,30,30,1) 0%, rgba(30,30,30,1) 85%, rgba(75, 0, 130, 0.5) 100%);
-            background-color: #1e1e1e;
-            color: #ffffff;
-            height: 100vh;
-            overflow: hidden;
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    /* Body Styling */
+    body {
+      font-family: 'Roboto', sans-serif;
+      /* Larger, more pronounced gradients */
+      background: radial-gradient(circle at top left, rgba(30,30,30,1), rgba(40,40,60,0.8)),
+                  radial-gradient(circle at bottom right, rgba(50, 25, 100, 0.8), rgba(30,30,30,1));
+      background-size: cover;
+      background-color: #1e1e1e;
+      color: #ffffff;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-        /* Message Container */
-        .message-container {
-            position: relative;
-            width: 80%;
-            max-width: 700px;
-            text-align: center;
-            padding: 20px;
-        }
+    /* Container for all messages */
+    .message-container {
+      position: relative;
+      width: 90%;
+      max-width: 600px;
+      text-align: center;
+      /* Fix a height to avoid layout shifts on mobile */
+      height: 250px;
+      overflow: hidden;
+    }
 
-        /* Individual Messages */
-        .message {
-            position: absolute;
-            width: 100%;
-            top: 0;
-            left: 100%;
-            opacity: 0;
-            transition: all 0.5s ease;
-            font-size: 1.8em;
-            line-height: 1.4;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        }
+    /* Individual Messages */
+    .message {
+      position: absolute;
+      width: 100%;
+      top: 0;
+      left: 100%;
+      opacity: 0;
+      transition: all 0.6s ease;
+      font-size: 1.8em;
+      line-height: 1.4;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+      padding: 0 10px;
+    }
 
-        .message.active {
-            left: 0;
-            opacity: 1;
-        }
+    /* Active message is centered and visible */
+    .message.active {
+      left: 0;
+      opacity: 1;
+    }
+    /* Exiting to the left */
+    .message.exit-left {
+      left: -100%;
+      opacity: 0;
+    }
+    /* Exiting to the right */
+    .message.exit-right {
+      left: 100%;
+      opacity: 0;
+    }
 
-        .message.exit-left {
-            left: -100%;
-            opacity: 0;
-        }
+    /* Snowflakes */
+    .snowflake {
+      position: absolute;
+      top: -10px;
+      color: #ffffff;
+      font-size: 1em;
+      opacity: 0.8;
+      user-select: none;
+      pointer-events: none;
+      animation: fall linear infinite;
+    }
+    @keyframes fall {
+      to {
+        transform: translateY(100vh) rotate(360deg);
+      }
+    }
 
-        .message.exit-right {
-            left: 100%;
-            opacity: 0;
-        }
+    /* ===================== */
+    /* BILLS + CONFETTI AREA */
+    /* ===================== */
 
-        /* Snowflakes */
-        .snowflake {
-            position: absolute;
-            top: -10px;
-            color: #ffffff;
-            font-size: 1em;
-            opacity: 0.8;
-            user-select: none;
-            pointer-events: none;
-            animation: fall linear infinite;
-        }
+    /* Bills Container */
+    .bills-container {
+      position: fixed;
+      bottom: -200px; /* Start well below the viewport */
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: bottom 1.2s ease, width 1s, height 1s;
+      opacity: 0;
+      z-index: 999;
+    }
+    /* Show bills container with a bigger width/height so we can stack/fan out */
+    .bills-container.show {
+      bottom: 20px;
+      opacity: 1;
+      width: 200px;
+      height: 150px;
+    }
 
-        /* Generate multiple snowflakes with different properties */
-        @keyframes fall {
-            to {
-                transform: translateY(100vh) rotate(360deg);
-            }
-        }
+    /* Individual Bill Styling */
+    .bill {
+      position: absolute;
+      width: 100px;
+      height: 50px;
+      /* Intricate pattern: layered gradient + subtle pattern */
+      background: 
+        /* diagonal lines pattern (SVG data URI or your own pattern) */
+        repeating-linear-gradient(
+          135deg, 
+          rgba(255,255,255,0.05) 0px,
+          rgba(255,255,255,0.05) 8px,
+          transparent 8px,
+          transparent 16px
+        ), 
+        linear-gradient(45deg, #4caf50, #0e9c75);
+      border-radius: 8px;
+      color: #ffffff;
+      font-weight: bold;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+      transform: translateY(150px) scale(0);
+      transition: transform 0.7s ease;
+      overflow: hidden;
+    }
+    .bill::before {
+      content: "$100";
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      font-size: 0.7em;
+      opacity: 0.7;
+    }
+    .bill::after {
+      content: "$100";
+      position: absolute;
+      bottom: 5px;
+      right: 8px;
+      font-size: 0.7em;
+      opacity: 0.7;
+      transform: rotate(180deg);
+    }
 
-        /* Bills Container */
-        .bills-container {
-            position: fixed;
-            bottom: -150px; /* Start off-screen */
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
-            opacity: 0;
-            transition: all 1s ease;
-            z-index: 10;
-        }
+    /* Each Bill Fans Out Slightly Differently */
+    .bill:nth-child(1) {
+      transition-delay: 0.1s;
+    }
+    .bill:nth-child(2) {
+      transition-delay: 0.2s;
+    }
+    .bill:nth-child(3) {
+      transition-delay: 0.3s;
+    }
+    .bill:nth-child(4) {
+      transition-delay: 0.4s;
+    }
+    .bill:nth-child(5) {
+      transition-delay: 0.5s;
+    }
+    /* We'll handle final positions with a 'fan-out' class in JS */
 
-        /* Individual Bill Styling */
-        .bill {
-            width: 80px;
-            height: 40px;
-            background: linear-gradient(45deg, #4caf50, #81c784);
-            border-radius: 8px;
-            color: #ffffff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: bold;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            transform: rotate(-5deg);
-            animation: float 2s infinite alternate;
-        }
+    /* ===================== */
+    /* CONFETTI (CSS + JS)  */
+    /* ===================== */
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: hsl(var(--hue), 80%, 50%);
+      top: 0;
+      left: 50%;
+      opacity: 0;
+      animation: confetti-fall 2s linear forwards;
+      will-change: transform;
+    }
 
-        /* Slight Rotation for Each Bill */
-        .bill:nth-child(1) { transform: rotate(-5deg) translateY(0); }
-        .bill:nth-child(2) { transform: rotate(5deg) translateY(0); }
-        .bill:nth-child(3) { transform: rotate(-3deg) translateY(0); }
-        .bill:nth-child(4) { transform: rotate(3deg) translateY(0); }
-        .bill:nth-child(5) { transform: rotate(0deg) translateY(0); }
+    @keyframes confetti-fall {
+      0% {
+        transform: translateX(0) translateY(0);
+        opacity: 1;
+      }
+      100% {
+        transform: translateX(var(--x)) translateY(var(--y)) rotate(720deg);
+        opacity: 0;
+      }
+    }
 
-        /* Float Animation */
-        @keyframes float {
-            to {
-                transform: translateY(-20px);
-            }
-        }
-    </style>
+    /* MOBILE RESPONSIVENESS */
+    @media (max-width: 600px) {
+      .message {
+        font-size: 1.4em;
+        line-height: 1.2;
+      }
+      .message-container {
+        height: 200px;
+      }
+      .bill {
+        width: 80px;
+        height: 40px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <!-- Snowflakes will be generated by JavaScript -->
+  <!-- Snowflakes will be generated by JavaScript -->
 
-    <div class="message-container">
-        <!-- Messages -->
-        <div class="message active">🎄 Merry Christmas! 🎅</div>
-        <div class="message">Wishing you a season filled with joy and warmth! ❤️</div>
-        <div class="message">May your holidays sparkle with moments of love and laughter. ✨</div>
-        <div class="message">And now... a special surprise for you! 🎁</div>
-        <div class="message">I'm giving you $500! 🎉 Happy Holidays!</div>
-    </div>
+  <div class="message-container">
+    <!-- Messages -->
+    <div class="message active">🎄 Merry Christmas! 🎅</div>
+    <div class="message">Wishing you a season filled with joy and warmth! ❤️</div>
+    <div class="message">May your holidays sparkle with love and laughter. ✨</div>
+    <div class="message">And now... a special surprise awaits you! 🎁</div>
+    <!-- Last message: no text needed, just the final reveal! -->
+    <div class="message"></div>
+  </div>
 
-    <!-- Sliding Bills Container -->
-    <div class="bills-container" id="bills-container">
-        <div class="bill">$100</div>
-        <div class="bill">$100</div>
-        <div class="bill">$100</div>
-        <div class="bill">$100</div>
-        <div class="bill">$100</div>
-    </div>
+  <!-- Sliding Bills Container -->
+  <div class="bills-container" id="bills-container">
+    <div class="bill" id="bill1"></div>
+    <div class="bill" id="bill2"></div>
+    <div class="bill" id="bill3"></div>
+    <div class="bill" id="bill4"></div>
+    <div class="bill" id="bill5"></div>
+  </div>
 
-    <script>
-        // Message Navigation Logic
-        const messages = document.querySelectorAll('.message');
-        let currentMessage = 0;
-        let isAnimating = false;
+  <script>
+    /* ========================= */
+    /*  MESSAGE SWIPE & NAVIGATION LOGIC
+    /* ========================= */
+    const messages = document.querySelectorAll('.message');
+    let currentMessage = 0;
+    let isAnimating = false;
 
-        // Swipe Detection Variables
-        let touchStartX = 0;
-        let touchEndX = 0;
+    // For swiping on touch devices
+    let touchStartX = 0;
+    let touchEndX = 0;
 
-        // Function to show the bills
-        function showBills() {
-            const billsContainer = document.getElementById('bills-container');
-            billsContainer.style.bottom = '20px'; // Slide up into view
-            billsContainer.style.opacity = '1';
+    // For "mouse swipe" on desktop (optional)
+    let mouseDown = false;
+    let mouseStartX = 0;
+    let mouseEndX = 0;
+
+    function updateMessages(direction) {
+      if (isAnimating) return; // Prevent multiple swipes during animation
+      isAnimating = true;
+
+      const current = messages[currentMessage];
+      let next;
+
+      if (direction === 'next') {
+        if (currentMessage < messages.length - 1) {
+          next = messages[currentMessage + 1];
+          // current slides out to the left
+          current.classList.add('exit-left');
+          // next slides in from the right
+          next.classList.add('active');
+          currentMessage++;
         }
-
-        // Function to hide the bills
-        function hideBills() {
-            const billsContainer = document.getElementById('bills-container');
-            billsContainer.style.bottom = '-150px';
-            billsContainer.style.opacity = '0';
+      } else if (direction === 'prev') {
+        if (currentMessage > 0) {
+          next = messages[currentMessage - 1];
+          // current slides out to the right
+          current.classList.add('exit-right');
+          // previous slides in from the left
+          next.classList.add('active');
+          currentMessage--;
         }
+      }
 
-        // Function to update messages based on direction
-        function updateMessages(direction) {
-            if (isAnimating) return; // Prevent multiple swipes during animation
-            isAnimating = true;
+      current.addEventListener('transitionend', function handler() {
+        current.classList.remove('active', 'exit-left', 'exit-right');
+        current.removeEventListener('transitionend', handler);
+        isAnimating = false;
 
-            const current = messages[currentMessage];
-            let next;
-
-            if (direction === 'next') {
-                if (currentMessage < messages.length - 1) {
-                    next = messages[currentMessage + 1];
-                    current.classList.add('exit-left');
-                    next.classList.add('active');
-                    currentMessage++;
-                    
-                    // If this is the last message, show the bills
-                    if (currentMessage === messages.length - 1) {
-                        setTimeout(showBills, 500); // Delay to sync with transition
-                    }
-                }
-            } else if (direction === 'prev') {
-                if (currentMessage > 0) {
-                    next = messages[currentMessage - 1];
-                    current.classList.add('exit-right');
-                    next.classList.add('active');
-                    currentMessage--;
-
-                    // Hide the bills if navigating back
-                    if (currentMessage < messages.length - 1) {
-                        hideBills();
-                    }
-                }
-            }
-
-            // Listen for transition end to reset classes
-            current.addEventListener('transitionend', function handler() {
-                current.classList.remove('active', 'exit-left', 'exit-right');
-                isAnimating = false;
-                current.removeEventListener('transitionend', handler);
-            });
+        // If user just arrived at the last message, show bills + confetti
+        if (currentMessage === messages.length - 1) {
+          showBillsAndConfetti();
+        } else {
+          hideBills(); // If leaving last message, hide them again
         }
+      });
+    }
 
-        // Swipe Handling Functions
-        function handleGesture() {
-            if (touchEndX < touchStartX - 50) {
-                updateMessages('next');
-            }
-            if (touchEndX > touchStartX + 50) {
-                updateMessages('prev');
-            }
-        }
+    // Handle gestures
+    function handleSwipeGesture() {
+      // Swiping left -> next
+      if (touchEndX < touchStartX - 50) {
+        updateMessages('next');
+      }
+      // Swiping right -> prev
+      if (touchEndX > touchStartX + 50) {
+        updateMessages('prev');
+      }
+    }
 
-        // Event Listeners for Touch Events
-        document.addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
+    // Touch events
+    document.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    });
+    document.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipeGesture();
+    });
+
+    // Mouse events for desktop
+    document.addEventListener('mousedown', (e) => {
+      mouseDown = true;
+      mouseStartX = e.screenX;
+    });
+    document.addEventListener('mouseup', (e) => {
+      if (!mouseDown) return;
+      mouseDown = false;
+      mouseEndX = e.screenX;
+      if (mouseEndX < mouseStartX - 50) {
+        updateMessages('next');
+      }
+      if (mouseEndX > mouseStartX + 50) {
+        updateMessages('prev');
+      }
+    });
+
+    /* ========================= */
+    /* SNOWFLAKE GENERATION
+    /* ========================= */
+    function createSnowflakes() {
+      const snowflakeCount = 40; // Number of snowflakes
+      for (let i = 0; i < snowflakeCount; i++) {
+        const snowflake = document.createElement('div');
+        snowflake.classList.add('snowflake');
+        snowflake.innerHTML = '❄️';
+
+        // Randomize initial position and size
+        snowflake.style.left = Math.random() * 100 + 'vw';
+        snowflake.style.fontSize = Math.random() * 10 + 10 + 'px'; // 10px to 20px
+
+        // Randomize animation duration and delay
+        const duration = Math.random() * 5 + 5; // 5s to 10s
+        snowflake.style.animationDuration = `${duration}s`;
+        snowflake.style.animationDelay = `-${Math.random() * duration}s`; // Start at random position in the animation
+
+        // Randomize horizontal movement using CSS transforms
+        const horizontalMove = Math.random() * 100 - 50; // -50px to +50px
+        snowflake.style.transform = `translateX(${horizontalMove}px)`;
+
+        document.body.appendChild(snowflake);
+      }
+    }
+
+    /* ========================= */
+    /* BILLS + CONFETTI LOGIC
+    /* ========================= */
+    const billsContainer = document.getElementById('bills-container');
+    const bills = document.querySelectorAll('.bill');
+
+    // Show the bills and confetti
+    function showBillsAndConfetti() {
+      billsContainer.classList.add('show');
+
+      // Wait until container is visible, then fan out each bill
+      setTimeout(() => {
+        bills.forEach((bill, index) => {
+          // Each bill fans out with a slight offset
+          const angle = -10 + (index * 5); // -10, -5, 0, 5, 10 degrees
+          // Slide up & scale in
+          bill.style.transform = `translateY(0) scale(1) rotate(${angle}deg)`;
         });
+      }, 400);
 
-        document.addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].screenX;
-            handleGesture();
+      // Burst confetti
+      confettiBurst();
+    }
+
+    // Hide the bills if user swipes back from last message
+    function hideBills() {
+      billsContainer.classList.remove('show');
+      bills.forEach((bill) => {
+        // Reset transform so they stack at the bottom
+        bill.style.transform = `translateY(150px) scale(0)`;
+      });
+    }
+
+    /* CONFETTI BURST */
+    function confettiBurst() {
+      const confettiCount = 60; // Number of confetti pieces
+      for (let i = 0; i < confettiCount; i++) {
+        const confetti = document.createElement('div');
+        confetti.classList.add('confetti');
+        // Random hue
+        const hue = Math.floor(Math.random() * 360);
+        confetti.style.setProperty('--hue', hue);
+
+        // Random end positions
+        const x = (Math.random() - 0.5) * 400 + 'px'; // -200px to +200px
+        const y = (Math.random() * 600 + 300) + 'px'; // 300px to 900px
+        confetti.style.setProperty('--x', x);
+        confetti.style.setProperty('--y', y);
+
+        // Random size
+        const size = Math.random() * 0.7 + 0.3; // 0.3 to 1.0 scale
+        confetti.style.transform = `scale(${size})`;
+
+        document.body.appendChild(confetti);
+
+        // Remove confetti from DOM after animation
+        confetti.addEventListener('animationend', () => {
+          confetti.remove();
         });
+      }
+    }
 
-        // Optional: Add Mouse Swipe Support for Desktop
-        let mouseDown = false;
-        let mouseStartX = 0;
-        let mouseEndX = 0;
-
-        document.addEventListener('mousedown', (e) => {
-            mouseDown = true;
-            mouseStartX = e.screenX;
-        });
-
-        document.addEventListener('mouseup', (e) => {
-            if (!mouseDown) return;
-            mouseDown = false;
-            mouseEndX = e.screenX;
-            if (mouseEndX < mouseStartX - 50) {
-                updateMessages('next');
-            }
-            if (mouseEndX > mouseStartX + 50) {
-                updateMessages('prev');
-            }
-        });
-
-        // Snowflake Generation
-        function createSnowflakes() {
-            const snowflakeCount = 50; // Number of snowflakes
-            for (let i = 0; i < snowflakeCount; i++) {
-                const snowflake = document.createElement('div');
-                snowflake.classList.add('snowflake');
-                snowflake.innerHTML = '❄️';
-
-                // Randomize initial position and size
-                snowflake.style.left = Math.random() * 100 + 'vw';
-                snowflake.style.fontSize = Math.random() * 10 + 10 + 'px'; // 10px to 20px
-
-                // Randomize animation duration and delay
-                const duration = Math.random() * 5 + 5; // 5s to 10s
-                snowflake.style.animationDuration = `${duration}s`;
-                snowflake.style.animationDelay = `-${Math.random() * duration}s`; // Start at random position in the animation
-
-                // Randomize horizontal movement using CSS transforms
-                const horizontalMove = Math.random() * 100 - 50; // -50px to +50px
-                snowflake.style.transform = `translateX(${horizontalMove}px)`;
-
-                document.body.appendChild(snowflake);
-            }
-        }
-
-        // Initialize Snowflakes on Page Load
-        window.onload = () => {
-            createSnowflakes();
-        };
-    </script>
+    // Initialize Snowflakes on Page Load
+    window.onload = () => {
+      createSnowflakes();
+    };
+  </script>
 </body>
 </html>
