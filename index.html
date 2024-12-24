@@ -539,14 +539,14 @@
     /****************************************/
     function showBillsAndConfetti() {
       billsContainer.classList.add('show');
-
+    
       // Stage 1: Appear as a single stack
       setTimeout(() => {
         bills.forEach((bill) => {
           bill.style.transform = `scale(1) rotate(0deg)`;
         });
       }, 200);
-
+    
       // Stage 2: Slight horizontal spread
       setTimeout(() => {
         bills.forEach((bill, i) => {
@@ -554,8 +554,8 @@
           bill.style.transform = `scale(1) translateX(${offset}px) rotate(0deg)`;
         });
       }, 800);
-
-       // Stage 3: Fan out from the bottom
+    
+      // Stage 3: Fan out from the bottom
       setTimeout(() => {
         bills.forEach((bill, i) => {
           const angle = (i - 2) * 15;  // -30, -15, 0, 15, 30 degrees
@@ -568,7 +568,7 @@
           finalText.style.opacity = '1'; // Trigger CSS animations
         }, 200); // Slight delay to ensure bills are fully fanned out
       }, 1400);
-
+    
       // Confetti
       confettiBurst();
     }
