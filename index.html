@@ -15,10 +15,10 @@
       height: 100%;
       overflow: hidden;    /* Hide scrollbars entirely */
       touch-action: none;  /* Disable default scroll on mobile swipes */
-      font-family: 'Roboto', sans-serif;
+      font-family: 'Poppins', sans-serif; /* Updated Font */
     }
 
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
 
     body {
       /* Larger, more pronounced corner gradients */
@@ -49,7 +49,7 @@
       align-items: center;    /* Center horizontally */
       justify-content: center;/* Center vertically */
       text-align: center;
-      font-size: 2rem;
+      font-size: 2.5rem; /* Increased Font Size */
       padding: 0 15px;
       box-sizing: border-box;
       /* Ensure content doesn't shift */
@@ -57,7 +57,7 @@
 
     @media (max-width: 600px) {
       .slide {
-        font-size: 1.4rem;
+        font-size: 1.8rem; /* Adjusted for smaller screens */
       }
     }
 
@@ -82,6 +82,18 @@
       opacity: 0.9;
       /* Subtle text shadow for readability */
       text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+      /* For typewriter effect */
+      white-space: pre-wrap; /* Preserve line breaks */
+      overflow: hidden;      /* Hide overflow */
+      border-right: 0.15em solid rgba(255, 255, 255, 0.75); /* Cursor */
+      box-sizing: border-box;
+      animation: blink-caret 0.75s step-end infinite; /* Cursor blink */
+    }
+
+    /* Cursor Blink Animation */
+    @keyframes blink-caret {
+      from, to { border-color: transparent; }
+      50% { border-color: rgba(255, 255, 255, 0.75); }
     }
 
     /****************************************/
@@ -287,7 +299,7 @@
 
     .final-text {
       opacity: 0;
-      font-size: 2rem;
+      font-size: 2.5rem; /* Increased Font Size */
       font-weight: bold;
       color: transparent;
       background: linear-gradient(90deg, #FFD700, #FFEC8B, #FFD700);
@@ -377,6 +389,14 @@
         opacity: 0;
       }
     }
+
+    /****************************************/
+    /*  TYPEWRITER EFFECT STYLING           */
+    /****************************************/
+    /* Optional: Adjust cursor style if desired */
+    .slide p {
+      border-right: 0.15em solid rgba(255, 255, 255, 0.75); /* Cursor */
+    }
   </style>
 </head>
 <body>
@@ -387,7 +407,7 @@
     <!-- Slide 1 -->
     <div class="slide slide1">
       <div class="message">
-        <p>Merry Christmas, AV!</p>
+        <p data-text="Merry Christmas, AV!"></p>
       </div>
       <!-- Photo Carousel -->
       <div class="carousel">
@@ -401,7 +421,7 @@
     <!-- Slide 2 -->
     <div class="slide slide2">
       <div class="message">
-        <p>Wishing you a season <br> filled with joy and warmth!</p>
+        <p data-text="Wishing you a season filled with joy and warmth!"></p>
       </div>
       <!-- Photo Carousel -->
       <div class="carousel">
@@ -415,7 +435,7 @@
     <!-- Slide 3 -->
     <div class="slide slide3">
       <div class="message">
-        <p>Stay focused on your classes, keep climbing, and don't stop being you ❤️</p>
+        <p data-text="Stay focused on your classes, keep climbing, and don't stop being you ❤️"></p>
       </div>
       <!-- Photo Carousel -->
       <div class="carousel">
@@ -429,7 +449,7 @@
     <!-- Slide 4 -->
     <div class="slide slide4">
       <div class="message">
-        <p>You'll be back to climbing V4s in no time!</p>
+        <p data-text="You'll be back to climbing V4s in no time!"></p>
       </div>
       <!-- Photo Carousel -->
       <div class="carousel">
@@ -510,6 +530,7 @@
       } else {
         hideBills();
         hideFinalText(); // Hide final text if navigating back
+        typeWriterEffect(index); // Trigger typewriter effect on slide
       }
     }
 
@@ -702,12 +723,37 @@
     }
 
     /****************************************/
+    /*  TYPEWRITER EFFECT FUNCTION          */
+    /****************************************/
+    function typeWriterEffect(slideIndex) {
+      const slide = document.querySelector(`.slide${slideIndex + 1}`);
+      const messageP = slide.querySelector('.message p');
+      const fullText = messageP.getAttribute('data-text');
+      messageP.textContent = ''; // Clear existing text
+
+      let currentChar = 0;
+      const typingSpeed = 50; // milliseconds per character
+
+      const typeInterval = setInterval(() => {
+        if (currentChar < fullText.length) {
+          messageP.textContent += fullText.charAt(currentChar);
+          currentChar++;
+        } else {
+          clearInterval(typeInterval);
+          // Remove cursor after typing
+          messageP.style.borderRight = 'none';
+        }
+      }, typingSpeed);
+    }
+
+    /****************************************/
     /*  INIT ON LOAD                        */
     /****************************************/
     window.onload = () => {
       createSnowflakes();
       goToSlide(0); // Start at first slide
       initializeCarousels(); // Initialize the carousels
+      typeWriterEffect(0); // Type on the first slide initially
     };
 
     /****************************************/
