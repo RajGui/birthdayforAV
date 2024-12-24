@@ -50,6 +50,8 @@
       text-align: center;
       font-size: 2rem;
       padding: 0 15px;
+      box-sizing: border-box;
+      /* Ensure content doesn't shift */
     }
 
     @media (max-width: 600px) {
@@ -60,6 +62,24 @@
 
     .slide1, .slide2, .slide3, .slide4, .slide5 {
       background: transparent; /* Let body gradient show through */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    /****************************************/
+    /*  MAGICAL TEXT STYLING                */
+    /****************************************/
+    .slide p {
+      /* Gradient Text */
+      background: linear-gradient(90deg, rgba(135, 206, 250, 1), rgba(138, 43, 226, 0.8));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      /* Slight transparency */
+      opacity: 0.9;
+      /* Subtle text shadow for readability */
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
     }
 
     /****************************************/
@@ -86,11 +106,11 @@
     /****************************************/
     .bills-container {
       position: absolute;
-      top: 50%;
+      bottom: 20px; /* Start slightly above the bottom */
       left: 50%;
-      transform: translate(-50%, -50%);
+      transform: translateX(-50%);
       display: flex;
-      align-items: center;
+      align-items: flex-end; /* Align bills at the bottom */
       justify-content: center;
       width: 0;
       height: 0;
@@ -106,8 +126,8 @@
 
     .bill {
       position: absolute;
-      width: 180px;
-      height: 90px;
+      width: 90px;    /* Vertical orientation */
+      height: 180px;  /* Vertical orientation */
       background:
         /* Subtle stripes pattern */
         repeating-linear-gradient(
@@ -130,31 +150,32 @@
       transition: transform 0.5s ease;
       overflow: hidden;
       cursor: pointer; /* Indicate interactivity */
+      transform-origin: bottom center; /* Rotate from the bottom */
     }
 
     /* $100 in corners */
     .bill::before {
       content: "$100";
       position: absolute;
-      top: 6px;
-      left: 8px;
-      font-size: 0.7rem;
-      opacity: 0.7;
+      top: 10px;
+      left: 12px;
+      font-size: 0.8rem;
+      opacity: 0.8;
     }
     .bill::after {
       content: "$100";
       position: absolute;
-      bottom: 5px;
-      right: 8px;
-      font-size: 0.7rem;
-      opacity: 0.7;
+      bottom: 10px;
+      right: 12px;
+      font-size: 0.8rem;
+      opacity: 0.8;
       transform: rotate(180deg);
     }
 
     /* Center emoji on the face */
     .bill-emoji {
       position: absolute;
-      font-size: 1.5rem;
+      font-size: 2rem;
       /* Center the emoji in the bill */
       top: 50%;
       left: 50%;
@@ -164,11 +185,12 @@
 
     /* Bounce animation for interactivity */
     @keyframes bounce {
-      0%   { transform: scale(1);   }
-      20%  { transform: scale(1.2); }
-      50%  { transform: scale(0.95);}
-      80%  { transform: scale(1.1); }
-      100% { transform: scale(1);   }
+      0%   { transform: scale(1) translateY(0); }
+      20%  { transform: scale(1.1) translateY(-10px); }
+      40%  { transform: scale(0.95) translateY(0); }
+      60%  { transform: scale(1.05) translateY(-5px); }
+      80%  { transform: scale(0.98) translateY(0); }
+      100% { transform: scale(1) translateY(0); }
     }
     .bounce {
       animation: bounce 0.6s ease;
@@ -319,7 +341,7 @@
       }
     }
 
-    // Touch
+    // Touch Events
     document.addEventListener('touchstart', (e) => {
       touchStartX = e.changedTouches[0].screenX;
     });
@@ -328,7 +350,7 @@
       handleSwipeGesture();
     });
 
-    // Mouse
+    // Mouse Events for Desktop
     document.addEventListener('mousedown', (e) => {
       mouseDown = true;
       mouseStartX = e.screenX;
@@ -360,17 +382,16 @@
       // Stage 2: Slight horizontal spread
       setTimeout(() => {
         bills.forEach((bill, i) => {
-          const offset = (i - 2) * 5; // e.g. -10, -5, 0, 5, 10
-          bill.style.transform = `scale(1) translateX(${offset}%) rotate(0deg)`;
+          const offset = (i - 2) * 5; // e.g., -10, -5, 0, 5, 10
+          bill.style.transform = `scale(1) translateX(${offset}px) rotate(0deg)`;
         });
       }, 800);
 
-      // Stage 3: Fan out (angles)
+      // Stage 3: Fan out from the bottom
       setTimeout(() => {
         bills.forEach((bill, i) => {
-          const offset = (i - 2) * 12; // more spread
-          const angle = (i - 2) * 10;  // -20, -10, 0, 10, 20
-          bill.style.transform = `scale(1) translateX(${offset}%) rotate(${angle}deg)`;
+          const angle = (i - 2) * 15;  // -30, -15, 0, 15, 30 degrees
+          bill.style.transform = `scale(1) translateX(${(i - 2) * 20}px) rotate(${angle}deg)`;
         });
       }, 1400);
 
