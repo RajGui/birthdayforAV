@@ -895,6 +895,27 @@
       const matrix = new DOMMatrix(style.transform);
       return Math.round(Math.atan2(matrix.b, matrix.a) * (180 / Math.PI));
     }
+    };
+
+    /****************************************/
+    /*  PHOTO CAROUSEL FUNCTION              */
+    /****************************************/
+    function initializeCarousels() {
+      const carousels = document.querySelectorAll('.carousel');
+      carousels.forEach((carousel) => {
+        const images = carousel.querySelectorAll('.carousel-image');
+        let current = 0;
+
+        // Initialize first image
+        images[current].classList.add('active');
+
+        // Function to show next image
+        setInterval(() => {
+          images[current].classList.remove('active');
+          current = (current + 1) % images.length;
+          images[current].classList.add('active');
+        }, 3000); // Change image every 3 seconds
+      });
     }
   </script>
 </body>
